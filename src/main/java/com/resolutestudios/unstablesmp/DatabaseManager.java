@@ -8,9 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.Bukkit;
 
 public class DatabaseManager {
 
@@ -28,9 +29,14 @@ public class DatabaseManager {
             dataFolder.getParentFile().mkdirs();
         }
 
+        // Check if database file already exists
+        boolean databaseExists = dataFolder.exists();
+
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder.getAbsolutePath());
+            
+            // Only create the table if it doesn't exist; never replace or drop
             try (PreparedStatement stmt = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS player_data (" +
                             "uuid TEXT PRIMARY KEY, " +
@@ -41,6 +47,12 @@ public class DatabaseManager {
                             "yaw FLOAT, " +
                             "pitch FLOAT)")) {
                 stmt.execute();
+            }
+            
+            if (databaseExists) {
+                plugin.getLogger().log(Level.INFO, "Loaded existing database file at {0}", dataFolder.getAbsolutePath());
+            } else {
+                plugin.getLogger().log(Level.INFO, "Created new database file at {0}", dataFolder.getAbsolutePath());
             }
         } catch (ClassNotFoundException | SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Could not initialize database", e);

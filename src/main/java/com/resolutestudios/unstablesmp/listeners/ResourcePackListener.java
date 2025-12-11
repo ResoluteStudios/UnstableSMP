@@ -1,12 +1,11 @@
 package com.resolutestudios.unstablesmp.listeners;
 
-import com.resolutestudios.unstablesmp.UnstableSMP;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+
+import com.resolutestudios.unstablesmp.UnstableSMP;
 
 public class ResourcePackListener implements Listener {
 
@@ -56,14 +55,9 @@ public class ResourcePackListener implements Listener {
                 event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED ||
                 event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
 
-            // "If the player autodeclines the resorcepack, it just puts them direcly at
-            // their logout location"
-            // So for ANY terminal status (Accepted, Declined, Failed), we restore them.
-            // Note: ACCEPTED should technically wait for LOADED, but if client doesn't send
-            // LOADED,
-            // we might want a timeout or manual skip. Standard flow is Accepted -> Loaded.
-            // Use skiprp if stuck.
-
+            // Restore player to their last logout location without moving them
+            // The restorePlayer method will teleport them to their saved location
+            // or spawn if no location was saved
             plugin.restorePlayer(player);
         }
     }

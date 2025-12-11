@@ -39,6 +39,9 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 | `/unstable <feature> <true/false>` | `unstablesmp.admin` | Toggle features (e.g., `deathkick`, `macenerf`). |
 | `/unstable update` | `unstablesmp.admin` | Force check for updates via GitHub API. |
 | `/unstable skiprp <player>` | `unstablesmp.admin` | Skip the Resource Pack waiting room for a player. |
+| `/unstable version` | `unstablesmp.admin` | Displays the current plugin version. |
+| `/unstable notifications autoupdate [true/false]` | `unstablesmp.admin` | Toggles update notifications. |
+
 
 ## Permissions
 

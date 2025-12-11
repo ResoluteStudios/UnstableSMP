@@ -5,6 +5,7 @@ import com.resolutestudios.unstablesmp.utils.SkinUtils;
 import com.resolutestudios.unstablesmp.utils.TextUtils;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -52,36 +53,77 @@ public class DisguiseCommand implements CommandExecutor {
         sender.sendMessage(TextUtils.toSmallCaps("§aFetching skin for " + skinName + "..."));
 
         // Run async
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            SkinUtils.SkinData skin = SkinUtils.getSkinFromMojang(skinName);
-            
-            // Back to main thread
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                if (skin == null) {
-                    sender.sendMessage(TextUtils.toSmallCaps("§cFailed to fetch skin (Invalid name?)."));
-                    return;
-                }
-
-                // Apply Skin using Paper API
-                PlayerProfile profile = targetPlayer.getPlayerProfile();
-                profile.removeProperty("textures"); // Clean old
-                profile.setProperty(new ProfileProperty("textures", skin.value, skin.signature));
-                targetPlayer.setPlayerProfile(profile);
-
-                // Refresh Player (Hide/Show)
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.hidePlayer(plugin, targetPlayer);
-                    p.showPlayer(plugin, targetPlayer);
-                }
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                SkinUtils.SkinData skin = SkinUtils.getSkinFromMojang(skinName);
                 
-                // Set Display Name (Partial disguise)
-                // Note: This won't change nametag over head without packets, but chat/tab usually works
-               // targetPlayer.setPlayerListName(skinName);
-               // targetPlayer.setDisplayName(skinName);
-                
-                // Feedback
-                sender.sendMessage(TextUtils.toSmallCaps("§aDisguised " + targetPlayer.getName() + " as " + skinName));
-            });
+                // Back to main thread
+                plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (skin == null) {
+                            sender.sendMessage(TextUtils.toSmallCaps("§cFailed to fetch skin (Invalid name?)."));
+                            return;
+                        }
+
+                        // Apply Skin using Paper API
+                        PlayerProfile profile = targetPlayer.getPlayerProfile();
+                        profile.removeProperty("textures"); // Clean old
+                        profile.setProperty(new ProfileProperty("textures", skin.value, skin.signature));
+                        targetPlayer.setPlayerProfile(profile);
+
+                        // Refresh Player (Hide/Show)
+                        for (Player p : Bukkit.getOnlinePlayers()) {
+                            p.hidePlayer(plugin, targetPlayer);
+                            p.showPlayer(plugin, targetPlayer);
+                        }
+                        
+                        // Set Display Name (Partial disguise)
+                        // Changes how the player appears in chat/tab and above their head
+                        Component nameComponent = Component.text(skinName);
+                        
+                        try {
+                            targetPlayer.playerListName(nameComponent);
+                        } catch (Throwable ignored) {
+                        }
+                        
+                        try {
+                            targetPlayer.displayName(nameComponent);
+                        } catch (Throwable ignored) {
+                        }
+
+                        // Set a visible custom name (nametag) above the player
+                        try {
+                            targetPlayer.customName(nameComponent);
+                            targetPlayer.setCustomNameVisible(true);
+                        } catch (Throwable ignored) {
+                        }
+
+                        // If scoreboard is available, create a team to ensure nametag shows correctly for other players
+                        try {
+                            org.bukkit.scoreboard.ScoreboardManager manager = Bukkit.getScoreboardManager();
+                            org.bukkit.scoreboard.Scoreboard board = manager.getMainScoreboard();
+                            String teamName = "disguise_" + targetPlayer.getUniqueId().toString().replace('-', '_').substring(0, 16);
+                            org.bukkit.scoreboard.Team team = board.getTeam(teamName);
+                            if (team == null) {
+                                team = board.registerNewTeam(teamName);
+                            }
+                            // Ensure target player's entry is part of the team
+                            String entry = targetPlayer.getName();
+                            if (!team.getEntries().contains(entry)) {
+                                team.addEntry(entry);
+                            }
+                            // Set prefix to skinName to affect nametag
+                            team.prefix(Component.text(skinName));
+                        } catch (Throwable ignored) {
+                        }
+                        
+                        // Feedback
+                        sender.sendMessage(TextUtils.toSmallCaps("§aDisguised " + targetPlayer.getName() + " as " + skinName));
+                    }
+                });
+            }
         });
 
         return true;
