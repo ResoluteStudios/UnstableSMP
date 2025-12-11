@@ -1,5 +1,11 @@
 # UnstableSMP Patch Notes
 
+## v1.1.5
+
+### Fixes
+- **Updater Bar**: Changed the progress bar for updating to look better
+
+
 ## v1.1.4
 
 ### Fixes
