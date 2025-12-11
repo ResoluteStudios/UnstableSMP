@@ -6,6 +6,8 @@ resource-pack:
   id: "ecd41192-136f-4b61-a681-106daf75634f"
   prompt: "ᴛʜᴇ ѕᴇʀᴠᴇʀ ʀᴇᴄᴏᴍᴍᴇɴᴅѕ ʏᴏᴜ ᴜѕᴇ ᴛʜᴇ ᴘʀᴏᴠɪᴅᴇᴅ ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ᴛᴏ ɪᴍᴘʀᴏᴠᴇ ʏᴏᴜʀ ᴇхᴘᴇʀɪᴇɴᴄᴇ ᴏɴ ᴛʜᴇ ѕᴇʀᴠᴇʀ."
 auto-update: true
+notifications:
+  autoupdate: true
 render-distance:
   enabled: true
   min: 8

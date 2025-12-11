@@ -47,5 +47,14 @@ public class JoinListener implements Listener {
                 player.setResourcePack(url, hash, false, Component.text(smallCapsPrompt));
             }
         });
+        
+        // Update Notification
+        if (player.hasPermission("unstablesmp.admin") && plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
+            if (com.resolutestudios.unstablesmp.Updater.isUpdateAvailable()) {
+                String ver = com.resolutestudios.unstablesmp.Updater.getLatestVersion();
+                String prefix = plugin.getPrefix();
+                player.sendMessage(com.resolutestudios.unstablesmp.utils.TextUtils.toSmallCaps(prefix + "§aUpdate available: v" + ver));
+            }
+        }
     }
 }

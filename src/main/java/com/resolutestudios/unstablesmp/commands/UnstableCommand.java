@@ -31,12 +31,6 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length == 1 && args[0].equalsIgnoreCase("version")) {
-            send(sender, "§aUnstableSMP v" + plugin.getDescription().getVersion());
-            send(sender, "§7Created by " + String.join(", ", plugin.getDescription().getAuthors()));
-            return true;
-        }
-
         if (args.length == 1 && args[0].equalsIgnoreCase("update")) {
             send(sender, "§aChecking for updates...");
             new Updater(plugin).checkForUpdates(sender); // Pass sender for feedback
@@ -53,6 +47,22 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             send(sender, "§aSkipped Resource Pack check for " + target.getName());
             target.sendMessage(TextUtils.toSmallCaps("§aResource pack skipped by admin."));
             return true;
+        }
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("version")) {
+            send(sender, "§aVersion: v" + plugin.getDescription().getVersion());
+            return true;
+        }
+
+        if (args.length >= 2 && args[0].equalsIgnoreCase("notifications")) {
+            if (args.length == 3 && args[1].equalsIgnoreCase("autoupdate")) {
+                String val = args[2].toLowerCase();
+                boolean boolVal = val.equals("true");
+                plugin.getConfig().set("notifications.autoupdate", boolVal);
+                plugin.saveConfig();
+                send(sender, "§aSet Auto-Update Notifications to " + boolVal);
+                return true;
+            }
         }
 
         if (args.length < 2) {
@@ -86,8 +96,7 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
 
     private void send(CommandSender sender, String message) {
         String prefix = plugin.getPrefix();
-        String fullMessage = TextUtils.toSmallCaps(prefix + message);
-        sender.sendMessage(fullMessage);
+        sender.sendMessage(TextUtils.toSmallCaps(prefix + message));
     }
 
     private boolean isValidFeature(String feature) {
@@ -99,11 +108,11 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp", "version"), completions);
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp"), completions);
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("skiprp")) {
                  return null; // Return null to let Bukkit suggest player names
-            } else if (!args[0].equalsIgnoreCase("update") && !args[0].equalsIgnoreCase("version")) {
+            } else if (!args[0].equalsIgnoreCase("update")) {
                 org.bukkit.util.StringUtil.copyPartialMatches(args[1], Arrays.asList("true", "false"), completions);
             }
         }

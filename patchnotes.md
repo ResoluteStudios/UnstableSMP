@@ -3,8 +3,13 @@
 ## v1.2.0
 
 ### Features
-- **Version Command**: Added `/unstable version` to quickly check the running plugin version and authors.
-- **Console Colors**: The plugin now outputs colored messages to the server console during startup, shutdown, and other operations, making logs easier to read.
+- **Auto-Pilot Updating**: The plugin now automatically checks for updates every 10 minutes and will download/install them immediately if found.
+    - Added config `notifications.autoupdate` to toggle admin notifications (Default: true).
+    - Admins are notified on join and in real-time if an update is found.
+- **Commands**:
+    - `/unstable version`: Displays the current plugin version.
+    - `/unstable notifications autoupdate [true/false]`: Toggles update notifications.
+- **Console**: Improved console output with full color support.
 
 ## v1.1.6
 
@@ -16,21 +21,29 @@
     - **Configurable Prefix**: Added a fancy hex-color prefix to all plugin messages (configurable).
     - **Resource Pack Loading**: Added an animated loading bar while the resource pack is downloading.
 
+### Fixes
+- **Mace Nerf**: Verified and polished combat nerf logic.
+
 ## v1.1.4
 
 ### Fixes
-- **Critical Persistence Fix**: Fixed a bug where players would respawn at the world spawn (or void) if they disconnected/crashed while in the Resource Pack "Waiting Room". The plugin now correctly ignores the temporary void location and preserves the player's last valid logout spot.
+- **Critical Persistence Fix**: Preserves player logout location if disconnected in waiting room.
 
 ## v1.1.3
 
 ### Features
-- **Save-on-Disable**: Plugin safeguards player data on server stop.
-- **Mace Nerf**: Reduced damage (x0.66) and patched swap exploits with ProtocolLib.
-- **Wind Burst Patch**: Prevents infinite launch exploits.
-- **Visuals**: All messages now support colors.
+- Save-on-disable functionality.
+- Mace swap exploit prevention (ProtocolLib).
+- Wind Burst enchantment temporary disable.
 
-## v1.1.0 - v1.1.2
+## v1.1.2
 
-- **ProtocolLib**: Added dependency for advanced packet handling.
-- **Resource Pack Waiting Room**: Secure area for pack loading.
-- **Small Caps**: Stylized text support.
+### Features
+- Resource pack waiting room.
+- SkipRP command.
+- Mace damage nerf.
+
+## v1.1.0
+
+### Features
+- Initial release with Death/RP logic.

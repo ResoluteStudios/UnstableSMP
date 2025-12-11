@@ -38,9 +38,7 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 |---|---|---|
 | `/unstable <feature> <true/false>` | `unstablesmp.admin` | Toggle features (e.g., `deathkick`, `macenerf`). |
 | `/unstable update` | `unstablesmp.admin` | Force check for updates via GitHub API. |
-| `/unstable version` | `unstablesmp.admin` | Show plugin version and authors. |
 | `/unstable skiprp <player>` | `unstablesmp.admin` | Skip the Resource Pack waiting room for a player. |
-| `/disguise <skin> [player]` | `unstablesmp.admin` | Disguise as another player (Skin). |
 
 ## Permissions
 

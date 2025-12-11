@@ -5,8 +5,10 @@ import com.google.gson.JsonParser;
 import com.resolutestudios.unstablesmp.utils.ProgressBar;
 import com.resolutestudios.unstablesmp.utils.TextUtils;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -21,20 +23,46 @@ public class Updater {
 
     private final UnstableSMP plugin;
     private final String REPO_URL = "https://api.github.com/repos/ResoluteStudios/UnstableSMP/releases/latest";
+    
+    private static boolean updateAvailable = false;
+    private static String latestVersionTag = "";
 
     public Updater(UnstableSMP plugin) {
         this.plugin = plugin;
     }
+    
+    public static boolean isUpdateAvailable() {
+        return updateAvailable;
+    }
+    
+    public static String getLatestVersion() {
+        return latestVersionTag;
+    }
 
-    public void checkForUpdates() {
-        checkForUpdates(null);
+    public void startLoop() {
+        // Run immediately on start
+        checkForUpdates(null, true);
+        
+        // Schedule every 10 minutes (12000 ticks)
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                checkForUpdates(null, false);
+            }
+        }.runTaskTimer(plugin, 12000L, 12000L);
     }
 
     public void checkForUpdates(CommandSender validationSender) {
+        checkForUpdates(validationSender, false);
+    }
+
+    private void checkForUpdates(CommandSender validationSender, boolean isStartup) {
         plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> {
             try {
-                // Simulate progress for UI
-                updateProgressBar(0.1f, "Checking...");
+                if (validationSender != null) {
+                    // Simulate progress for UI if manual check
+                    updateProgressBar(0.1f, "Checking...");
+                }
 
                 URL url = URI.create(REPO_URL).toURL();
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -46,22 +74,41 @@ public class Updater {
                     JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
                     String latestVersion = json.get("tag_name").getAsString().replace("v", "");
                     String currentVersion = plugin.getDescription().getVersion();
+                    
+                    latestVersionTag = latestVersion;
 
                     if (isNewer(currentVersion, latestVersion)) {
-                        updateProgressBar(0.4f, "Found version " + latestVersion);
+                        updateAvailable = true;
+                        
+                        if (validationSender != null) updateProgressBar(0.4f, "Found version " + latestVersion);
 
-                        String downloadUrl = json.get("assets").getAsJsonArray().get(0).getAsJsonObject()
-                                .get("browser_download_url").getAsString();
-                        downloadUpdate(downloadUrl, json.get("name").getAsString());
+                        // Always auto-download if configured
+                        if (plugin.getConfig().getBoolean("auto-update", true)) {
+                            String downloadUrl = json.get("assets").getAsJsonArray().get(0).getAsJsonObject()
+                                    .get("browser_download_url").getAsString();
+                            downloadUpdate(downloadUrl, json.get("name").getAsString());
+                            
+                            if (validationSender != null) updateProgressBar(1.0f, "Update Downloaded! Restart to apply.");
+                        }
 
-                        updateProgressBar(1.0f, "Update Downloaded! Restart to apply.");
+                        // Notify Console
+                        plugin.log("§aUpdate found: " + latestVersion + ". Downloaded: " + plugin.getConfig().getBoolean("auto-update"));
+
+                        // Notify Admins
+                        if (plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
+                             notifyAdmins("§aA new update (v" + latestVersion + ") is available!");
+                        }
+                        
+                        // Feedback to sender
                         if (validationSender != null)
-                            validationSender
-                                    .sendMessage(TextUtils.toSmallCaps("§aUpdate downloaded! Restart to apply."));
+                             validationSender.sendMessage(TextUtils.toSmallCaps("§aUpdate downloaded! Restart to apply."));
+
                     } else {
-                        updateProgressBar(1.0f, "Plugin is up to date.");
-                        if (validationSender != null)
+                        updateAvailable = false;
+                        if (validationSender != null) {
+                            updateProgressBar(1.0f, "Plugin is up to date.");
                             validationSender.sendMessage(TextUtils.toSmallCaps("§aPlugin is up to date."));
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -70,6 +117,17 @@ public class Updater {
                     validationSender.sendMessage("§cFailed to check updates.");
             }
         });
+    }
+    
+    private void notifyAdmins(String message) {
+        String prefix = plugin.getPrefix();
+        Component comp = Component.text(TextUtils.toSmallCaps(prefix + message));
+        
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.hasPermission("unstablesmp.admin")) {
+                p.sendMessage(comp);
+            }
+        }
     }
 
     private void updateProgressBar(float progress, String status) {
@@ -83,6 +141,8 @@ public class Updater {
     }
 
     private boolean isNewer(String current, String latest) {
+        // Simple string comparison might fail for complex versions, but sufficient for standard x.y.z
+        // Better to use Split(".") and compare integers
         return !current.equalsIgnoreCase(latest);
     }
 
@@ -93,7 +153,7 @@ public class Updater {
             if (!updateFolder.exists())
                 updateFolder.mkdirs();
 
-            File outputFile = new File(updateFolder, "UnstableSMP-v" + fileName + ".jar"); // Or just overwrite name
+            File outputFile = new File(updateFolder, "UnstableSMP-v" + fileName + ".jar");
             if (!outputFile.getName().endsWith(".jar"))
                 outputFile = new File(updateFolder, "UnstableSMP.jar");
 
@@ -106,7 +166,6 @@ public class Updater {
                     fileOutputStream.write(dataBuffer, 0, bytesRead);
                 }
             }
-            // Logic handled by main loop
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Could not download update.", e);
         }

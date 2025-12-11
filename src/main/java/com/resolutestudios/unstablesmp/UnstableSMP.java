@@ -31,16 +31,21 @@ public class UnstableSMP extends JavaPlugin {
         // Start Adaptive Render Distance
         new com.resolutestudios.unstablesmp.systems.AdaptiveRenderDistance(this).runTaskTimer(this, 100L, 600L); // Start after 5s, run every 30s
 
-        getServer().getConsoleSender().sendMessage("§aUnstableSMP enabled!");
+        log("§aUnstableSMP enabled!");
 
-        // Auto-updater placeholder logic would go here
+        // Auto-updater loop
         if (getConfig().getBoolean("auto-update", true)) {
             try {
-                new Updater(this).checkForUpdates();
+                new Updater(this).startLoop();
             } catch (Exception e) {
-                getLogger().warning("Failed to check for updates: " + e.getMessage());
+                getLogger().warning("Failed to start updater: " + e.getMessage());
             }
         }
+    }
+    
+    public void log(String message) {
+        String p = getPrefix();
+        getServer().getConsoleSender().sendMessage(com.resolutestudios.unstablesmp.utils.TextUtils.toSmallCaps(p + message));
     }
 
     public String getPrefix() {
@@ -59,7 +64,7 @@ public class UnstableSMP extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.close();
         }
-        getServer().getConsoleSender().sendMessage("§cUnstableSMP disabled!");
+        log("§cUnstableSMP disabled!");
     }
 
     public DatabaseManager getDatabaseManager() {
