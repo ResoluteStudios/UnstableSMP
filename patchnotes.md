@@ -1,5 +1,17 @@
 # UnstableSMP Patch Notes
 
+## v1.2.1
+
+### Features
+- **Enhanced Disguise System**: The `/disguise` command now applies both player skin texture and changes the player's displayed name.
+    - Updates player list name, display name, and nametag above the player.
+    - Uses scoreboard teams to ensure nametag displays correctly to other players.
+- **Resource Pack Logic**: After resource pack loading (accepted, declined, or failed), players are now restored to their last logout location instead of being moved to a default spawn.
+- **Database Improvements**: The plugin database file is no longer replaced on startup—it is only created once and new data is added to it, preserving all existing player location data.
+
+### Fixes
+- Improved database persistence to prevent data loss on plugin restarts.
+
 ## v1.2.0
 
 ### Features
