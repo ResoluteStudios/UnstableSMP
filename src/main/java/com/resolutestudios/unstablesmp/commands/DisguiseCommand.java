@@ -79,43 +79,12 @@ public class DisguiseCommand implements CommandExecutor {
                             p.showPlayer(plugin, targetPlayer);
                         }
                         
-                        // Set Display Name (Partial disguise)
-                        // Changes how the player appears in chat/tab and above their head
+                        // Change only the display name (used in chat)
+                        // The nameplate (above head) will show the actual username
                         Component nameComponent = Component.text(skinName);
                         
                         try {
-                            targetPlayer.playerListName(nameComponent);
-                        } catch (Throwable ignored) {
-                        }
-                        
-                        try {
                             targetPlayer.displayName(nameComponent);
-                        } catch (Throwable ignored) {
-                        }
-
-                        // Set a visible custom name (nametag) above the player
-                        try {
-                            targetPlayer.customName(nameComponent);
-                            targetPlayer.setCustomNameVisible(true);
-                        } catch (Throwable ignored) {
-                        }
-
-                        // If scoreboard is available, create a team to ensure nametag shows correctly for other players
-                        try {
-                            org.bukkit.scoreboard.ScoreboardManager manager = Bukkit.getScoreboardManager();
-                            org.bukkit.scoreboard.Scoreboard board = manager.getMainScoreboard();
-                            String teamName = "disguise_" + targetPlayer.getUniqueId().toString().replace('-', '_').substring(0, 16);
-                            org.bukkit.scoreboard.Team team = board.getTeam(teamName);
-                            if (team == null) {
-                                team = board.registerNewTeam(teamName);
-                            }
-                            // Ensure target player's entry is part of the team
-                            String entry = targetPlayer.getName();
-                            if (!team.getEntries().contains(entry)) {
-                                team.addEntry(entry);
-                            }
-                            // Set prefix to skinName to affect nametag
-                            team.prefix(Component.text(skinName));
                         } catch (Throwable ignored) {
                         }
                         
