@@ -1,6 +1,7 @@
 # UnstableSMP
 
-**UnstableSMP** is a custom Minecraft Paper/Folia plugin designed for a hardcore "Unstable" SMP experience. It introduces unique mechanics like death bans, forced resource packs with a waiting room, combat nerfs, and strict item restrictions.
+UnstableSMP Plugin is a plugin that introduces similar features to those that are on the youtuber UnstableSMP
+
 =======
 # UnstableSMP Plugin
 
