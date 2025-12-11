@@ -1,0 +1,11 @@
+death-message: "§cＹᴏᴜ ʜᴀᴠᴇ ᴅɪᴇᴅ ᴀɴᴅ ʜᴀᴠᴇ ʙᴇᴇɴ ᴅᴇᴀᴛʜᴋɪᴄᴋᴇᴅ ꜰʀᴏᴍ ᴛʜᴇ ѕᴇʀᴠᴇʀ!"
+resource-pack:
+  url: "https://minepack.fr/pack/ecd41192-136f-4b61-a681-106daf75634f"
+  sha1: "fdd795884e45245207f282e095430df2fcf37846"
+  prompt: "ᴛʜᴇ ѕᴇʀᴠᴇʀ ʀᴇᴄᴏᴍᴍᴇɴᴅѕ ʏᴏᴜ ᴜѕᴇ ᴛʜᴇ ᴘʀᴏᴠɪᴅᴇᴅ ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ᴛᴏ ɪᴍᴘʀᴏᴠᴇ ʏᴏᴜʀ ᴇхᴘᴇʀɪᴇɴᴄᴇ ᴏɴ ᴛʜᴇ ѕᴇʀᴠᴇʀ."
+auto-update: true
+features:
+  deathkick: true
+  netheriteban: false
+  maceban: false
+  macenerf: false

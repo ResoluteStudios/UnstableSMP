@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=http://json.schemastore.org/spigot-plugin
+name: UnstableSMP
+version: "1.1.4"
+main: com.resolutestudios.unstablesmp.UnstableSMP
+api-version: "1.21"
+folia-supported: true
+depend: [ProtocolLib]
+description: A plugin that kicks players on death and handles resource packs.
+authors: [ResoluteStudios]
+permissions:
+  unstablesmp.bypass:
+    description: Allows bypassing the deathkick.
+    default: op
+commands:
+  unstable:
+    description: Control UnstableSMP features.
+    usage: /unstable <feature> <value> or /unstable update
+    permission: unstablesmp.admin
