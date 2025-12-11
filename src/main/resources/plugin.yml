@@ -16,3 +16,7 @@ commands:
     description: Control UnstableSMP features.
     usage: /unstable <feature> <value> or /unstable update
     permission: unstablesmp.admin
+  disguise:
+    description: Disguise as another player.
+    usage: /disguise <skin> [player]
+    permission: unstablesmp.admin

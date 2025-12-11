@@ -1,8 +1,9 @@
 package com.resolutestudios.unstablesmp.commands;
 
-import com.resolutestudios.unstablesmp.UnstableSMP;
-import com.resolutestudios.unstablesmp.Updater;
-import com.resolutestudios.unstablesmp.utils.TextUtils;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,19 +11,16 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.resolutestudios.unstablesmp.UnstableSMP;
+import com.resolutestudios.unstablesmp.Updater;
+import com.resolutestudios.unstablesmp.utils.TextUtils;
 
 public class UnstableCommand implements CommandExecutor, TabCompleter {
 
     private final UnstableSMP plugin;
 
-    private final String prefix;
-
     public UnstableCommand(UnstableSMP plugin) {
         this.plugin = plugin;
-        this.prefix = plugin.getConfig().getString("prefix", "§8[§6UnstableSMP§8] ");
     }
 
     @Override
@@ -81,7 +79,8 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
     }
 
     private void send(CommandSender sender, String message) {
-        sender.sendMessage(prefix + TextUtils.toSmallCaps(message));
+        String prefix = plugin.getPrefix();
+        sender.sendMessage(TextUtils.toSmallCaps(prefix + message));
     }
 
     private boolean isValidFeature(String feature) {

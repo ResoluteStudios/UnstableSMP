@@ -26,6 +26,10 @@ public class UnstableSMP extends JavaPlugin {
                 .registerEvents(new com.resolutestudios.unstablesmp.listeners.CombatListener(this), this);
 
         getCommand("unstable").setExecutor(new com.resolutestudios.unstablesmp.commands.UnstableCommand(this));
+        getCommand("disguise").setExecutor(new com.resolutestudios.unstablesmp.commands.DisguiseCommand(this));
+
+        // Start Adaptive Render Distance
+        new com.resolutestudios.unstablesmp.systems.AdaptiveRenderDistance(this).runTaskTimer(this, 100L, 600L); // Start after 5s, run every 30s
 
         getLogger().info("UnstableSMP enabled!");
 
@@ -37,6 +41,10 @@ public class UnstableSMP extends JavaPlugin {
                 getLogger().warning("Failed to check for updates: " + e.getMessage());
             }
         }
+    }
+
+    public String getPrefix() {
+        return getConfig().getString("prefix", ""); // Default handled in config
     }
 
     @Override

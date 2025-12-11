@@ -3,9 +3,14 @@ prefix: "§8[§x§6§E§4§7§A§0ᴜ§x§6§E§4§7§A§0ɴ§x§6§9§4§6§9§
 resource-pack:
   url: "https://minepack.fr/pack/ecd41192-136f-4b61-a681-106daf75634f"
   sha1: "dbe9bf8a4b6f5ac012de87a9947f231eb7bfe354"
-  uuid: "ecd41192-136f-4b61-a681-106daf75634f"
+  id: "ecd41192-136f-4b61-a681-106daf75634f"
   prompt: "ᴛʜᴇ ѕᴇʀᴠᴇʀ ʀᴇᴄᴏᴍᴍᴇɴᴅѕ ʏᴏᴜ ᴜѕᴇ ᴛʜᴇ ᴘʀᴏᴠɪᴅᴇᴅ ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ᴛᴏ ɪᴍᴘʀᴏᴠᴇ ʏᴏᴜʀ ᴇхᴘᴇʀɪᴇɴᴄᴇ ᴏɴ ᴛʜᴇ ѕᴇʀᴠᴇʀ."
 auto-update: true
+render-distance:
+  enabled: true
+  min: 8
+  max: 18
+  player-max-threshold: 100
 features:
   deathkick: true
   netheriteban: false
