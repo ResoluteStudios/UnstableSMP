@@ -38,6 +38,7 @@
                         </goals>
                         <configuration>
                             <executable>cmd</executable>
+                            <ignoreExitValue>true</ignoreExitValue>
                             <arguments>
                                 <argument>/c</argument>
                                 <argument>"C:\Users\Others\Desktop\Projects\script.bat"</argument>

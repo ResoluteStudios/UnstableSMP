@@ -1,6 +1,5 @@
 package com.resolutestudios.unstablesmp.listeners;
 
-import com.resolutestudios.unstablesmp.UnstableSMP;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,6 +7,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.SmithingInventory;
+
+import com.resolutestudios.unstablesmp.UnstableSMP;
 
 public class ItemRestrictionListener implements Listener {
 
@@ -28,7 +29,7 @@ public class ItemRestrictionListener implements Listener {
             ItemStack current = event.getCurrentItem();
             if (current != null && isNetherite(current.getType())) {
                 event.setCancelled(true);
-                event.getWhoClicked().sendMessage("§cNetherite creation is disabled!");
+                event.getWhoClicked().sendMessage("§cNetherite creation is disabled on this server!");
             }
         }
     }
