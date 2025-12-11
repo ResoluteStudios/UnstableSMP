@@ -2,7 +2,7 @@
 
 UnstableSMP Plugin is a plugin that introduces similar features to those that are on the youtuber UnstableSMP
 
-=======
+
 # UnstableSMP Plugin
 
 **UnstableSMP** is a plugin that introduces features that are akin to those on the famous YouTuber UnstableSMP
