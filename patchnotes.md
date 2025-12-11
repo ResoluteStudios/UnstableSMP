@@ -1,12 +1,12 @@
 # UnstableSMP Patch Notes
 
-## v1.1.5
+## v1.1.6
 
 ### Features
 - **Adaptive Render Distance**: Automatically adjusts server view distance based on player count and TPS to maintain performance.
-- **Disguise System**: Added `/disguise <skinName> [player]` to change player skins using Mojang's API.
+- **Disguise System**: Added /disguise <skinName> [player] to change player skins using Mojang's API.
 - **Visuals**:
-    - **Gradual Progress Bars**: New UI for Updater and Resource Pack loading with [███░░] style and Red-Green text gradients.
+    - **Gradual Progress Bars**: New UI for Updater and Resource Pack loading with [|||  ] style and Red-Green text gradients.
     - **Configurable Prefix**: Added a fancy hex-color prefix to all plugin messages (configurable).
     - **Resource Pack Loading**: Added an animated loading bar while the resource pack is downloading.
 
