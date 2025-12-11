@@ -18,8 +18,11 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
 
     private final UnstableSMP plugin;
 
+    private final String prefix;
+
     public UnstableCommand(UnstableSMP plugin) {
         this.plugin = plugin;
+        this.prefix = plugin.getConfig().getString("prefix", "§8[§6UnstableSMP§8] ");
     }
 
     @Override
@@ -78,7 +81,7 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
     }
 
     private void send(CommandSender sender, String message) {
-        sender.sendMessage(TextUtils.toSmallCaps(message));
+        sender.sendMessage(prefix + TextUtils.toSmallCaps(message));
     }
 
     private boolean isValidFeature(String feature) {
@@ -88,11 +91,16 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
             @NotNull String label, @NotNull String[] args) {
+        List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            return Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp");
-        } else if (args.length == 2 && !args[0].equalsIgnoreCase("update") && !args[0].equalsIgnoreCase("skiprp")) {
-            return Arrays.asList("true", "false");
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp"), completions);
+        } else if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("skiprp")) {
+                 return null; // Return null to let Bukkit suggest player names
+            } else if (!args[0].equalsIgnoreCase("update")) {
+                org.bukkit.util.StringUtil.copyPartialMatches(args[1], Arrays.asList("true", "false"), completions);
+            }
         }
-        return new ArrayList<>();
+        return completions;
     }
 }

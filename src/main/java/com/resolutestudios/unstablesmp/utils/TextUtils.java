@@ -35,4 +35,9 @@ public class TextUtils {
         }
         return builder.toString();
     }
+    public static String gradient(String text, java.awt.Color start, java.awt.Color end, float factor) {
+        // Placeholder for complex character-by-character gradient if needed.
+        // For now, Updater uses single interpolated color.
+        return text;
+    }
 }
