@@ -31,6 +31,12 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if (args.length == 1 && args[0].equalsIgnoreCase("version")) {
+            send(sender, "§aUnstableSMP v" + plugin.getDescription().getVersion());
+            send(sender, "§7Created by " + String.join(", ", plugin.getDescription().getAuthors()));
+            return true;
+        }
+
         if (args.length == 1 && args[0].equalsIgnoreCase("update")) {
             send(sender, "§aChecking for updates...");
             new Updater(plugin).checkForUpdates(sender); // Pass sender for feedback
@@ -80,7 +86,8 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
 
     private void send(CommandSender sender, String message) {
         String prefix = plugin.getPrefix();
-        sender.sendMessage(TextUtils.toSmallCaps(prefix + message));
+        String fullMessage = TextUtils.toSmallCaps(prefix + message);
+        sender.sendMessage(fullMessage);
     }
 
     private boolean isValidFeature(String feature) {
@@ -92,11 +99,11 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp"), completions);
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp", "version"), completions);
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("skiprp")) {
                  return null; // Return null to let Bukkit suggest player names
-            } else if (!args[0].equalsIgnoreCase("update")) {
+            } else if (!args[0].equalsIgnoreCase("update") && !args[0].equalsIgnoreCase("version")) {
                 org.bukkit.util.StringUtil.copyPartialMatches(args[1], Arrays.asList("true", "false"), completions);
             }
         }

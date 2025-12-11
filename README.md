@@ -38,7 +38,9 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 |---|---|---|
 | `/unstable <feature> <true/false>` | `unstablesmp.admin` | Toggle features (e.g., `deathkick`, `macenerf`). |
 | `/unstable update` | `unstablesmp.admin` | Force check for updates via GitHub API. |
+| `/unstable version` | `unstablesmp.admin` | Show plugin version and authors. |
 | `/unstable skiprp <player>` | `unstablesmp.admin` | Skip the Resource Pack waiting room for a player. |
+| `/disguise <skin> [player]` | `unstablesmp.admin` | Disguise as another player (Skin). |
 
 ## Permissions
 
@@ -47,8 +49,8 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 
 ## Installation
 
-1. Download `UnstableSMP-v1.1.3.jar`.
-2. Install **ProtocolLib** (Required) and drop both plugins into your `plugins` folder.
+1. Download the [Latest Version](https://github.com/ResoluteStudios/UnstableSMP/releases/latest)
+2. Install [ProtocolLib](https://github.com/dmulloy2/ProtocolLib/releases/latest) **(Required)** and drop both plugins into your `plugins` folder.
 3. Restart the server.
 
 ---
