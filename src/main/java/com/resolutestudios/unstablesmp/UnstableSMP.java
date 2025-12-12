@@ -3,7 +3,6 @@ package com.resolutestudios.unstablesmp;
 import com.resolutestudios.unstablesmp.listeners.DeathListener;
 import com.resolutestudios.unstablesmp.listeners.JoinListener;
 import com.resolutestudios.unstablesmp.listeners.QuitListener;
-import com.resolutestudios.unstablesmp.listeners.ResourcePackListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,8 +25,6 @@ public class UnstableSMP extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new QuitListener(this), this);
-        getServer().getPluginManager().registerEvents(new ResourcePackListener(this), this);
-        getServer().getPluginManager().registerEvents(new com.resolutestudios.unstablesmp.listeners.ChatListener(this), this);
         getServer().getPluginManager()
                 .registerEvents(new com.resolutestudios.unstablesmp.listeners.ItemRestrictionListener(this), this);
         getServer().getPluginManager()
@@ -64,10 +61,7 @@ public class UnstableSMP extends JavaPlugin {
     public void onDisable() {
         // Save all online players' locations
         for (Player p : getServer().getOnlinePlayers()) {
-            // Only save if NOT pending (not in waiting room)
-            if (!isPending(p.getUniqueId())) {
-                databaseManager.savePlayerLocation(p.getUniqueId(), p.getLocation());
-            }
+            databaseManager.savePlayerLocation(p.getUniqueId(), p.getLocation());
         }
         if (databaseManager != null) {
             databaseManager.close();
@@ -77,47 +71,5 @@ public class UnstableSMP extends JavaPlugin {
 
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
-    }
-
-    private final java.util.Map<java.util.UUID, net.kyori.adventure.text.Component> pendingJoinMessages = new java.util.concurrent.ConcurrentHashMap<>();
-
-    public boolean isPending(java.util.UUID uuid) {
-        return pendingJoinMessages.containsKey(uuid);
-    }
-
-    public void addPendingJoinMessage(java.util.UUID uuid, net.kyori.adventure.text.Component message) {
-        pendingJoinMessages.put(uuid, message);
-    }
-
-    public net.kyori.adventure.text.Component getAndRemovePendingJoinMessage(java.util.UUID uuid) {
-        return pendingJoinMessages.remove(uuid);
-    }
-
-    public void restorePlayer(Player player) {
-        org.bukkit.Location originalLoc = getDatabaseManager().getPlayerLocation(player.getUniqueId());
-
-        java.util.function.Consumer<Boolean> onComplete = (val) -> {
-            player.setGameMode(org.bukkit.GameMode.SURVIVAL);
-            
-            // Show player in tab list using ProtocolLib
-            com.resolutestudios.unstablesmp.utils.TabListUtils.showInTabList(player);
-
-            // Show player to others
-            for (Player p : getServer().getOnlinePlayers()) {
-                p.showPlayer(this, player);
-            }
-
-            // Broadcast join message
-            net.kyori.adventure.text.Component msg = getAndRemovePendingJoinMessage(player.getUniqueId());
-            if (msg != null) {
-                getServer().sendMessage(msg);
-            }
-        };
-
-        if (originalLoc != null) {
-            player.teleportAsync(originalLoc).thenAccept(onComplete);
-        } else {
-            player.teleportAsync(player.getWorld().getSpawnLocation()).thenAccept(onComplete);
-        }
     }
 }

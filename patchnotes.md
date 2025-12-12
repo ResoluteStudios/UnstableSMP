@@ -1,5 +1,25 @@
 # UnstableSMP Patch Notes
 
+## v1.2.4
+
+### Breaking Changes
+- **Removed Resource Pack System**: Completely removed all resource pack functionality.
+    - Players now join normally without any waiting area or resource pack prompts.
+    - Join messages appear immediately.
+    - Players appear in tab list immediately.
+    - Chat is enabled immediately upon join.
+    - Removed `/unstable skiprp` command.
+- **Simplified Player Flow**: Players join directly into the game at their last logout location (or world spawn for new players).
+
+### Technical Changes
+- Deleted `ResourcePackListener.java` - no longer needed.
+- Deleted `ChatListener.java` - no longer needed.
+- Deleted `TabListUtils.java` - no longer needed.
+- Simplified `JoinListener.java` - removed waiting area logic.
+- Simplified `QuitListener.java` - always saves player location.
+- Updated `UnstableSMP.java` - removed pending player tracking and restore logic.
+- Updated `UnstableCommand.java` - removed skiprp command.
+
 ## v1.2.3
 
 ### Features

@@ -37,18 +37,6 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length == 2 && args[0].equalsIgnoreCase("skiprp")) {
-            org.bukkit.entity.Player target = org.bukkit.Bukkit.getPlayer(args[1]);
-            if (target == null) {
-                send(sender, "§cPlayer not found.");
-                return true;
-            }
-            plugin.restorePlayer(target);
-            send(sender, "§aSkipped Resource Pack check for " + target.getName());
-            target.sendMessage(TextUtils.toSmallCaps("§aResource pack skipped by admin."));
-            return true;
-        }
-
         if (args.length == 1 && args[0].equalsIgnoreCase("version")) {
             send(sender, "§aVersion: v" + plugin.getDescription().getVersion());
             return true;
@@ -108,11 +96,9 @@ public class UnstableCommand implements CommandExecutor, TabCompleter {
             @NotNull String label, @NotNull String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "skiprp"), completions);
+            org.bukkit.util.StringUtil.copyPartialMatches(args[0], Arrays.asList("deathkick", "netheriteban", "maceban", "macenerf", "update", "version", "notifications"), completions);
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("skiprp")) {
-                 return null; // Return null to let Bukkit suggest player names
-            } else if (!args[0].equalsIgnoreCase("update")) {
+            if (!args[0].equalsIgnoreCase("update") && !args[0].equalsIgnoreCase("version")) {
                 org.bukkit.util.StringUtil.copyPartialMatches(args[1], Arrays.asList("true", "false"), completions);
             }
         }

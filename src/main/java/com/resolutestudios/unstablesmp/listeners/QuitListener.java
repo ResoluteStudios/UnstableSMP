@@ -15,13 +15,8 @@ public class QuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // Save player location to database on quit ONLY if not pending
-        if (!plugin.isPending(event.getPlayer().getUniqueId())) {
-            plugin.getDatabaseManager().savePlayerLocation(event.getPlayer().getUniqueId(),
-                    event.getPlayer().getLocation());
-        }
-
-        // Cleanup pending message if they quit while waiting
-        plugin.getAndRemovePendingJoinMessage(event.getPlayer().getUniqueId());
+        // Save player location to database on quit
+        plugin.getDatabaseManager().savePlayerLocation(event.getPlayer().getUniqueId(),
+                event.getPlayer().getLocation());
     }
 }

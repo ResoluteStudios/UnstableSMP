@@ -16,13 +16,6 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 - **Custom Sounds**: Plays a global sound effect when a player dies (Beacon Deactivate @ 0.8 volume).
 - **Logout Location**: Guarantees players respawn at their exact logout location (persistence/crash-proof).
 
-###  Resource Pack Logic
-- **Waiting Room**: Players join in a "void" state (Spectator/Hidden) until they interact with the Resource Pack prompt.
-- **Strict Flow**:
-  - **Accepted** -> Wait for load -> Restore to Survival.
-  - **Declined/Failed** -> Restore to Survival (or kick, depending on config).
-  - **Skip Command**: Admins can force-skip this check for stuck players.
-
 ###  Combat Balance (v1.1.3)
 - **Mace Nerf**: Mace damage is reduced to **66%** (`x0.66`).
 - **Anti-Swap Exploit**: Uses **ProtocolLib** to strictly inspect packets. Prevents players from hitting with a Mace and swapping to a Sword to bypass cooldowns or enchantments.
@@ -38,9 +31,9 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 |---|---|---|
 | `/unstable <feature> <true/false>` | `unstablesmp.admin` | Toggle features (e.g., `deathkick`, `macenerf`). |
 | `/unstable update` | `unstablesmp.admin` | Force check for updates via GitHub API. |
-| `/unstable skiprp <player>` | `unstablesmp.admin` | Skip the Resource Pack waiting room for a player. |
 | `/unstable version` | `unstablesmp.admin` | Displays the current plugin version. |
 | `/unstable notifications autoupdate [true/false]` | `unstablesmp.admin` | Toggles update notifications. |
+| `/disguise <skinName> [player]` | `unstablesmp.admin` | Disguise as another player. |
 
 
 ## Permissions
