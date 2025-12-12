@@ -10,6 +10,9 @@
     - Chat is enabled immediately upon join.
     - Removed `/unstable skiprp` command.
 - **Simplified Player Flow**: Players join directly into the game at their last logout location (or world spawn for new players).
+- **Deathkick Behavior**: Changed deathkick to only kick players from the server instead of banning them.
+    - Players can rejoin immediately after being kicked for dying.
+    - The configured death message is still shown when kicked.
 
 ### Technical Changes
 - Deleted `ResourcePackListener.java` - no longer needed.

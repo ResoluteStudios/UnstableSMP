@@ -44,8 +44,5 @@ public class DeathListener implements Listener {
 
         // Kick the player
         player.kick(reason);
-
-        // Ban the player
-        player.ban(finalMessage, (java.util.Date) null, "UnstableSMP");
     }
 }

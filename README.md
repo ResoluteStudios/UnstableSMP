@@ -11,8 +11,8 @@ UnstableSMP Plugin is a plugin that introduces similar features to those that ar
 ## Features
 
 ###  Death Mechanics
-- **Deathkick**: Players are kicked and banned upon death (configurable).
-- **Spectator Mode**: Alternatively, players can be put into spectator mode instead of being banned.
+- **Deathkick**: Players are kicked from the server upon death (configurable).
+- **Spectator Mode**: Alternatively, players can be put into spectator mode instead of being kicked.
 - **Custom Sounds**: Plays a global sound effect when a player dies (Beacon Deactivate @ 0.8 volume).
 - **Logout Location**: Guarantees players respawn at their exact logout location (persistence/crash-proof).
 
