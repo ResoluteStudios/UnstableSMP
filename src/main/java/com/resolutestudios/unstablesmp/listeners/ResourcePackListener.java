@@ -20,7 +20,7 @@ public class ResourcePackListener implements Listener {
         Player player = event.getPlayer();
 
         if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED) {
-            // Start fake loading bar
+            // Start loading bar
             new org.bukkit.scheduler.BukkitRunnable() {
                 float progress = 0.0f;
                 @Override
@@ -29,10 +29,7 @@ public class ResourcePackListener implements Listener {
                         this.cancel();
                         return;
                     }
-                    // Stop if loaded (listener below will handle restore) or failed
-                    // Actually checking status nicely inside runnable is hard, we rely on cancels or just timed
-                    // But simpler: just run animation until we see them fully joined? 
-                    // Or keep 'pending' map check.
+                    // Stop if no longer pending
                     if (!plugin.isPending(player.getUniqueId())) {
                         this.cancel();
                         return;
@@ -51,13 +48,35 @@ public class ResourcePackListener implements Listener {
             return;
         }
 
-        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED ||
-                event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED ||
-                event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
-
-            // Restore player to their last logout location without moving them
-            // The restorePlayer method will teleport them to their saved location
-            // or spawn if no location was saved
+        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
+            // Wait 10 seconds after successful load, then restore player
+            new org.bukkit.scheduler.BukkitRunnable() {
+                int secondsLeft = 10;
+                
+                @Override
+                public void run() {
+                    if (!player.isOnline() || !plugin.isPending(player.getUniqueId())) {
+                        this.cancel();
+                        return;
+                    }
+                    
+                    if (secondsLeft > 0) {
+                        float progress = (10 - secondsLeft) / 10.0f;
+                        net.kyori.adventure.text.Component msg = com.resolutestudios.unstablesmp.utils.ProgressBar.create(progress)
+                            .append(net.kyori.adventure.text.Component.text(" Finalizing... " + secondsLeft + "s"));
+                        player.sendActionBar(msg);
+                        secondsLeft--;
+                    } else {
+                        // Restore player after 10 seconds
+                        plugin.restorePlayer(player);
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(plugin, 0L, 20L); // Run every second (20 ticks)
+            
+        } else if (event.getStatus() == PlayerResourcePackStatusEvent.Status.DECLINED ||
+                   event.getStatus() == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
+            // Immediately restore player if they decline or fail to download
             plugin.restorePlayer(player);
         }
     }

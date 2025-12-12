@@ -86,33 +86,51 @@ public class Updater {
                         if (plugin.getConfig().getBoolean("auto-update", true)) {
                             String downloadUrl = json.get("assets").getAsJsonArray().get(0).getAsJsonObject()
                                     .get("browser_download_url").getAsString();
+                            
+                            // Show progress to opped players during download
+                            updateProgressBar(0.5f, "Downloading update...");
+                            
                             downloadUpdate(downloadUrl, json.get("name").getAsString());
                             
-                            if (validationSender != null) updateProgressBar(1.0f, "Update Downloaded! Restart to apply.");
-                        }
-
-                        // Notify Console
-                        plugin.log("§aUpdate found: " + latestVersion + ". Downloaded: " + plugin.getConfig().getBoolean("auto-update"));
-
-                        // Notify Admins
-                        if (plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
-                             notifyAdmins("§aA new update (v" + latestVersion + ") is available!");
+                            updateProgressBar(1.0f, "Update Downloaded!");
+                            
+                            // Only log to console AFTER download completes
+                            plugin.log("§aUpdate v" + latestVersion + " has been downloaded! Restart to apply.");
+                            
+                            // Notify opped players
+                            notifyAdmins("§aUpdate v" + latestVersion + " downloaded! Restart to apply.");
+                            
+                            if (validationSender != null) {
+                                validationSender.sendMessage(TextUtils.toSmallCaps("§aUpdate downloaded! Restart to apply."));
+                            }
+                        } else {
+                            // If auto-update is disabled, still notify about availability
+                            plugin.log("§aUpdate v" + latestVersion + " is available!");
+                            
+                            if (plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
+                                notifyAdmins("§aA new update (v" + latestVersion + ") is available!");
+                            }
                         }
                         
-                        // Feedback to sender
-                        if (validationSender != null)
-                             validationSender.sendMessage(TextUtils.toSmallCaps("§aUpdate downloaded! Restart to apply."));
+                        if (validationSender != null && !plugin.getConfig().getBoolean("auto-update", true)) {
+                            validationSender.sendMessage(TextUtils.toSmallCaps("§aUpdate available: v" + latestVersion));
+                        }
 
                     } else {
                         updateAvailable = false;
+                        // Only send feedback if this is a manual check
                         if (validationSender != null) {
                             updateProgressBar(1.0f, "Plugin is up to date.");
                             validationSender.sendMessage(TextUtils.toSmallCaps("§aPlugin is up to date."));
                         }
+                        // No console logging for silent checks when up to date
                     }
                 }
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "Could not check for updates.", e);
+                // Only log errors if this is a manual check or startup
+                if (validationSender != null || isStartup) {
+                    plugin.getLogger().log(Level.WARNING, "Could not check for updates.", e);
+                }
                 if (validationSender != null)
                     validationSender.sendMessage("§cFailed to check updates.");
             }

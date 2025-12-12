@@ -36,6 +36,9 @@ public class JoinListener implements Listener {
         player.teleportAsync(voidLoc).thenAccept(success -> {
             if (success) {
                 player.setGameMode(GameMode.SPECTATOR);
+                
+                // Hide player from tab list using ProtocolLib
+                com.resolutestudios.unstablesmp.utils.TabListUtils.hideFromTabList(player);
 
                 String url = plugin.getConfig().getString("resource-pack.url");
                 String hash = plugin.getConfig().getString("resource-pack.sha1");

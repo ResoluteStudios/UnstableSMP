@@ -1,5 +1,35 @@
 # UnstableSMP Patch Notes
 
+## v1.2.3
+
+### Features
+- **Silent Auto-Update System**: The plugin now checks for updates every 10 minutes silently without console spam.
+    - Console is only notified when an update is actually found and downloaded.
+    - Opped players see a progress bar during the download process.
+    - Notifications appear only after successful download completion.
+- **Enhanced Resource Pack Loading**:
+    - Players are now hidden from the tab list while in the waiting area.
+    - Chat is blocked for players during resource pack loading.
+    - Added 10-second "Finalizing..." countdown after pack loads successfully.
+    - Players who decline or fail to download the pack are immediately restored (no delay).
+    - Full location persistence now includes pitch and yaw (already implemented in database).
+- **Code Security**:
+    - Added exception handler to filter stack traces and hide plugin code from crash reports.
+    - Global exception handler prevents plugin internals from appearing in error messages.
+    - Makes reverse-engineering more difficult.
+- **ProtocolLib Integration**:
+    - Tab list manipulation now uses ProtocolLib for reliable cross-version compatibility.
+    - New `TabListUtils` utility for hiding/showing players in tab list.
+
+### Technical Changes
+- Created `ChatListener.java` to prevent pending players from sending chat messages.
+- Created `TabListUtils.java` for ProtocolLib-based tab list manipulation.
+- Created `ExceptionHandler.java` for stack trace filtering and obfuscation.
+- Updated `Updater.java` with silent checking and progress bar notifications.
+- Updated `ResourcePackListener.java` with 10-second post-load delay.
+- Updated `JoinListener.java` to hide players from tab list during loading.
+- Updated `UnstableSMP.java` to show players in tab list after restoration.
+
 ## v1.2.1
 
 ### Features

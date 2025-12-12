@@ -14,12 +14,20 @@ public class UnstableSMP extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        
+        // Setup global exception handler to hide plugin code from stack traces
+        com.resolutestudios.unstablesmp.utils.ExceptionHandler.setupGlobalHandler(
+            getLogger(), 
+            "com.resolutestudios.unstablesmp"
+        );
 
         this.databaseManager = new DatabaseManager(this);
 
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+        getServer().getPluginManager().registerEvents(new QuitListener(this), this);
         getServer().getPluginManager().registerEvents(new ResourcePackListener(this), this);
+        getServer().getPluginManager().registerEvents(new com.resolutestudios.unstablesmp.listeners.ChatListener(this), this);
         getServer().getPluginManager()
                 .registerEvents(new com.resolutestudios.unstablesmp.listeners.ItemRestrictionListener(this), this);
         getServer().getPluginManager()
@@ -90,6 +98,9 @@ public class UnstableSMP extends JavaPlugin {
 
         java.util.function.Consumer<Boolean> onComplete = (val) -> {
             player.setGameMode(org.bukkit.GameMode.SURVIVAL);
+            
+            // Show player in tab list using ProtocolLib
+            com.resolutestudios.unstablesmp.utils.TabListUtils.showInTabList(player);
 
             // Show player to others
             for (Player p : getServer().getOnlinePlayers()) {
