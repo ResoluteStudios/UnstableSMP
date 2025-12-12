@@ -2,6 +2,21 @@
 
 ## v1.2.4
 
+### Features
+- **Persistent Disguise System**: Completely overhauled the `/disguise` command with full persistence and comprehensive name changes.
+    - **Database Storage**: Disguises are now saved to the database and persist across server restarts.
+    - **Complete Identity Change**: Disguises now affect:
+        - Player skin texture
+        - Nameplate (above player's head)
+        - Tab list name
+        - Display name (in chat)
+        - Join/quit messages
+    - **Reset Command**: Added `/disguise reset` to remove disguises and restore original identity.
+    - **Auto-Application**: Saved disguises are automatically reapplied when players join the server.
+- **Deathkick Behavior**: Changed deathkick to only kick players from the server instead of banning them.
+    - Players can rejoin immediately after being kicked for dying.
+    - The configured death message is still shown when kicked.
+
 ### Breaking Changes
 - **Removed Resource Pack System**: Completely removed all resource pack functionality.
     - Players now join normally without any waiting area or resource pack prompts.
@@ -10,11 +25,12 @@
     - Chat is enabled immediately upon join.
     - Removed `/unstable skiprp` command.
 - **Simplified Player Flow**: Players join directly into the game at their last logout location (or world spawn for new players).
-- **Deathkick Behavior**: Changed deathkick to only kick players from the server instead of banning them.
-    - Players can rejoin immediately after being kicked for dying.
-    - The configured death message is still shown when kicked.
 
 ### Technical Changes
+- **Database Schema**: Added `disguises` table to store persistent disguise data (name, skin value, skin signature).
+- **DisguiseCommand**: Complete rewrite with database integration, reset functionality, and all name display changes.
+- **JoinListener**: Auto-applies saved disguises on join and customizes join messages.
+- **QuitListener**: Customizes quit messages for disguised players.
 - Deleted `ResourcePackListener.java` - no longer needed.
 - Deleted `ChatListener.java` - no longer needed.
 - Deleted `TabListUtils.java` - no longer needed.
@@ -22,6 +38,7 @@
 - Simplified `QuitListener.java` - always saves player location.
 - Updated `UnstableSMP.java` - removed pending player tracking and restore logic.
 - Updated `UnstableCommand.java` - removed skiprp command.
+- Updated `DeathListener.java` - removed ban functionality, now only kicks.
 
 ## v1.2.3
 

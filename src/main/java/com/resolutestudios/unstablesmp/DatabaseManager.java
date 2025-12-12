@@ -36,7 +36,7 @@ public class DatabaseManager {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder.getAbsolutePath());
             
-            // Only create the table if it doesn't exist; never replace or drop
+            // Create player_data table
             try (PreparedStatement stmt = connection.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS player_data (" +
                             "uuid TEXT PRIMARY KEY, " +
@@ -46,6 +46,16 @@ public class DatabaseManager {
                             "z DOUBLE, " +
                             "yaw FLOAT, " +
                             "pitch FLOAT)")) {
+                stmt.execute();
+            }
+            
+            // Create disguises table
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS disguises (" +
+                            "uuid TEXT PRIMARY KEY, " +
+                            "disguise_name TEXT, " +
+                            "skin_value TEXT, " +
+                            "skin_signature TEXT)")) {
                 stmt.execute();
             }
             
@@ -96,6 +106,65 @@ public class DatabaseManager {
             plugin.getLogger().log(Level.SEVERE, "Could not get player location", e);
         }
         return null;
+    }
+
+    // Disguise Management
+    public void saveDisguise(UUID uuid, String disguiseName, String skinValue, String skinSignature) {
+        String query = "INSERT OR REPLACE INTO disguises (uuid, disguise_name, skin_value, skin_signature) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            stmt.setString(2, disguiseName);
+            stmt.setString(3, skinValue);
+            stmt.setString(4, skinSignature);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save disguise", e);
+        }
+    }
+
+    public DisguiseData getDisguise(UUID uuid) {
+        String query = "SELECT * FROM disguises WHERE uuid = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new DisguiseData(
+                        rs.getString("disguise_name"),
+                        rs.getString("skin_value"),
+                        rs.getString("skin_signature")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not get disguise", e);
+        }
+        return null;
+    }
+
+    public boolean hasDisguise(UUID uuid) {
+        return getDisguise(uuid) != null;
+    }
+
+    public void removeDisguise(UUID uuid) {
+        String query = "DELETE FROM disguises WHERE uuid = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not remove disguise", e);
+        }
+    }
+
+    public static class DisguiseData {
+        public final String name;
+        public final String skinValue;
+        public final String skinSignature;
+
+        public DisguiseData(String name, String skinValue, String skinSignature) {
+            this.name = name;
+            this.skinValue = skinValue;
+            this.skinSignature = skinSignature;
+        }
     }
 
     public void close() {

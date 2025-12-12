@@ -30,7 +30,7 @@ public class DisguiseCommand implements CommandExecutor {
         }
 
         if (args.length < 1) {
-            sender.sendMessage(TextUtils.toSmallCaps("§cUsage: /disguise <skinName> [targetPlayer]"));
+            sender.sendMessage(TextUtils.toSmallCaps("§cUsage: /disguise <skinName|reset> [targetPlayer]"));
             return true;
         }
 
@@ -47,6 +47,13 @@ public class DisguiseCommand implements CommandExecutor {
             targetPlayer = (Player) sender;
         } else {
             sender.sendMessage("§cConsole must specify a target.");
+            return true;
+        }
+
+        // Handle reset
+        if (skinName.equalsIgnoreCase("reset")) {
+            resetDisguise(targetPlayer);
+            sender.sendMessage(TextUtils.toSmallCaps("§aReset disguise for " + targetPlayer.getName()));
             return true;
         }
 
@@ -67,26 +74,16 @@ public class DisguiseCommand implements CommandExecutor {
                             return;
                         }
 
-                        // Apply Skin using Paper API
-                        PlayerProfile profile = targetPlayer.getPlayerProfile();
-                        profile.removeProperty("textures"); // Clean old
-                        profile.setProperty(new ProfileProperty("textures", skin.value, skin.signature));
-                        targetPlayer.setPlayerProfile(profile);
+                        // Save to database
+                        plugin.getDatabaseManager().saveDisguise(
+                            targetPlayer.getUniqueId(),
+                            skinName,
+                            skin.value,
+                            skin.signature
+                        );
 
-                        // Refresh Player (Hide/Show)
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            p.hidePlayer(plugin, targetPlayer);
-                            p.showPlayer(plugin, targetPlayer);
-                        }
-                        
-                        // Change only the display name (used in chat)
-                        // The nameplate (above head) will show the actual username
-                        Component nameComponent = Component.text(skinName);
-                        
-                        try {
-                            targetPlayer.displayName(nameComponent);
-                        } catch (Throwable ignored) {
-                        }
+                        // Apply disguise
+                        applyDisguise(targetPlayer, skinName, skin.value, skin.signature);
                         
                         // Feedback
                         sender.sendMessage(TextUtils.toSmallCaps("§aDisguised " + targetPlayer.getName() + " as " + skinName));
@@ -96,5 +93,54 @@ public class DisguiseCommand implements CommandExecutor {
         });
 
         return true;
+    }
+
+    public void applyDisguise(Player player, String disguiseName, String skinValue, String skinSignature) {
+        // Apply Skin using Paper API
+        PlayerProfile profile = player.getPlayerProfile();
+        profile.removeProperty("textures");
+        profile.setProperty(new ProfileProperty("textures", skinValue, skinSignature));
+        player.setPlayerProfile(profile);
+
+        // Refresh Player (Hide/Show)
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.hidePlayer(plugin, player);
+            p.showPlayer(plugin, player);
+        }
+        
+        Component nameComponent = Component.text(disguiseName);
+        
+        // Set display name (chat)
+        player.displayName(nameComponent);
+        
+        // Set player list name (tab list)
+        player.playerListName(nameComponent);
+        
+        // Set custom name (nameplate above head)
+        player.setCustomName(disguiseName);
+        player.setCustomNameVisible(true);
+    }
+
+    public void resetDisguise(Player player) {
+        // Remove from database
+        plugin.getDatabaseManager().removeDisguise(player.getUniqueId());
+        
+        // Reset to original skin
+        PlayerProfile profile = player.getPlayerProfile();
+        profile.removeProperty("textures");
+        profile.complete();
+        player.setPlayerProfile(profile);
+        
+        // Refresh Player
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.hidePlayer(plugin, player);
+            p.showPlayer(plugin, player);
+        }
+        
+        // Reset names
+        player.displayName(null);
+        player.playerListName(null);
+        player.setCustomName(null);
+        player.setCustomNameVisible(false);
     }
 }

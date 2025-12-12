@@ -18,5 +18,16 @@ public class QuitListener implements Listener {
         // Save player location to database on quit
         plugin.getDatabaseManager().savePlayerLocation(event.getPlayer().getUniqueId(),
                 event.getPlayer().getLocation());
+        
+        // Customize quit message if disguised
+        com.resolutestudios.unstablesmp.DatabaseManager.DisguiseData disguise = 
+            plugin.getDatabaseManager().getDisguise(event.getPlayer().getUniqueId());
+        
+        if (disguise != null && event.quitMessage() != null) {
+            String originalMsg = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+                .serialize(event.quitMessage());
+            String customMsg = originalMsg.replace(event.getPlayer().getName(), disguise.name);
+            event.quitMessage(net.kyori.adventure.text.Component.text(customMsg));
+        }
     }
 }

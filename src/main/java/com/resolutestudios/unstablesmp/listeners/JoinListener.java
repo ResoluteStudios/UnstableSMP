@@ -18,6 +18,25 @@ public class JoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         
+        // Apply saved disguise if exists
+        com.resolutestudios.unstablesmp.DatabaseManager.DisguiseData disguise = 
+            plugin.getDatabaseManager().getDisguise(player.getUniqueId());
+        
+        if (disguise != null) {
+            // Apply disguise
+            com.resolutestudios.unstablesmp.commands.DisguiseCommand disguiseCmd = 
+                new com.resolutestudios.unstablesmp.commands.DisguiseCommand(plugin);
+            disguiseCmd.applyDisguise(player, disguise.name, disguise.skinValue, disguise.skinSignature);
+            
+            // Customize join message
+            if (event.joinMessage() != null) {
+                String originalMsg = net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText()
+                    .serialize(event.joinMessage());
+                String customMsg = originalMsg.replace(player.getName(), disguise.name);
+                event.joinMessage(net.kyori.adventure.text.Component.text(customMsg));
+            }
+        }
+        
         // Update Notification
         if (player.hasPermission("unstablesmp.admin") && plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
             if (com.resolutestudios.unstablesmp.Updater.isUpdateAvailable()) {
