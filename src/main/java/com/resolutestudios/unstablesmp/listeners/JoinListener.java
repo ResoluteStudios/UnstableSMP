@@ -37,6 +37,9 @@ public class JoinListener implements Listener {
             }
         }
         
+        // Restore fishing hook if player was casting
+        plugin.getFishingListener().handlePlayerJoin(player);
+        
         // Update Notification
         if (player.hasPermission("unstablesmp.admin") && plugin.getConfig().getBoolean("notifications.autoupdate", true)) {
             if (com.resolutestudios.unstablesmp.Updater.isUpdateAvailable()) {

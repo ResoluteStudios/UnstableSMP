@@ -59,6 +59,20 @@ public class DatabaseManager {
                 stmt.execute();
             }
             
+            // Create fishing_state table
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "CREATE TABLE IF NOT EXISTS fishing_state (" +
+                            "uuid TEXT PRIMARY KEY, " +
+                            "is_casting INTEGER, " +
+                            "hook_x DOUBLE, " +
+                            "hook_y DOUBLE, " +
+                            "hook_z DOUBLE, " +
+                            "velocity_x DOUBLE, " +
+                            "velocity_y DOUBLE, " +
+                            "velocity_z DOUBLE)")) {
+                stmt.execute();
+            }
+            
             if (databaseExists) {
                 plugin.getLogger().log(Level.INFO, "Loaded existing database file at {0}", dataFolder.getAbsolutePath());
             } else {
@@ -164,6 +178,70 @@ public class DatabaseManager {
             this.name = name;
             this.skinValue = skinValue;
             this.skinSignature = skinSignature;
+        }
+    }
+
+    // Fishing State Management
+    public void saveFishingState(UUID uuid, org.bukkit.Location hookLoc, org.bukkit.util.Vector velocity) {
+        String query = "INSERT OR REPLACE INTO fishing_state (uuid, is_casting, hook_x, hook_y, hook_z, velocity_x, velocity_y, velocity_z) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            stmt.setInt(2, 1);
+            stmt.setDouble(3, hookLoc.getX());
+            stmt.setDouble(4, hookLoc.getY());
+            stmt.setDouble(5, hookLoc.getZ());
+            stmt.setDouble(6, velocity.getX());
+            stmt.setDouble(7, velocity.getY());
+            stmt.setDouble(8, velocity.getZ());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not save fishing state", e);
+        }
+    }
+
+    public FishingStateData getFishingState(UUID uuid) {
+        String query = "SELECT * FROM fishing_state WHERE uuid = ? AND is_casting = 1";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    org.bukkit.Location hookLoc = new org.bukkit.Location(
+                        null, // World will be set by caller
+                        rs.getDouble("hook_x"),
+                        rs.getDouble("hook_y"),
+                        rs.getDouble("hook_z")
+                    );
+                    org.bukkit.util.Vector velocity = new org.bukkit.util.Vector(
+                        rs.getDouble("velocity_x"),
+                        rs.getDouble("velocity_y"),
+                        rs.getDouble("velocity_z")
+                    );
+                    return new FishingStateData(hookLoc, velocity);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not get fishing state", e);
+        }
+        return null;
+    }
+
+    public void removeFishingState(UUID uuid) {
+        String query = "DELETE FROM fishing_state WHERE uuid = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, uuid.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().log(Level.SEVERE, "Could not remove fishing state", e);
+        }
+    }
+
+    public static class FishingStateData {
+        public final org.bukkit.Location hookLocation;
+        public final org.bukkit.util.Vector velocity;
+
+        public FishingStateData(org.bukkit.Location hookLocation, org.bukkit.util.Vector velocity) {
+            this.hookLocation = hookLocation;
+            this.velocity = velocity;
         }
     }
 

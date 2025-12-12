@@ -1,5 +1,24 @@
 # UnstableSMP Patch Notes
 
+## v1.2.5
+
+### Features
+- **Persistent Fishing**: Fishing rod casts now persist through teleports, portals, and logouts.
+    - **Teleport Persistence**: Hooks remain when players teleport or use commands like `/tp`.
+    - **Portal Persistence**: Hooks remain when going through Nether/End portals.
+    - **Logout Persistence**: Hooks are saved to database and restored when players rejoin.
+    - **Client Sync**: Uses ProtocolLib to force client synchronization after hook restoration.
+
+### Technical Changes
+- **Database Schema**: Added `fishing_state` table to store hook location and velocity.
+- **FishingListener**: New listener that handles:
+    - `PlayerFishEvent` - Track casting state and hook location
+    - `PlayerTeleportEvent` - Save hook before teleport, restore after
+    - `PlayerPortalEvent` - Save hook before portal, restore after
+- **JoinListener**: Restores fishing hook if player was casting when they logged out.
+- **QuitListener**: Saves fishing state when player logs out while casting.
+- **ProtocolLib**: Sends `SPAWN_ENTITY` packet to sync hook visually with client.
+
 ## v1.2.4
 
 ### Features

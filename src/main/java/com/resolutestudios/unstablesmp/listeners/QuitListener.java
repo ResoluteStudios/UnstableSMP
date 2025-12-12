@@ -15,6 +15,9 @@ public class QuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        // Save fishing state if player is casting
+        plugin.getFishingListener().handlePlayerQuit(event.getPlayer());
+        
         // Save player location to database on quit
         plugin.getDatabaseManager().savePlayerLocation(event.getPlayer().getUniqueId(),
                 event.getPlayer().getLocation());

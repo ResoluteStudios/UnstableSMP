@@ -1,6 +1,7 @@
 package com.resolutestudios.unstablesmp;
 
 import com.resolutestudios.unstablesmp.listeners.DeathListener;
+import com.resolutestudios.unstablesmp.listeners.FishingListener;
 import com.resolutestudios.unstablesmp.listeners.JoinListener;
 import com.resolutestudios.unstablesmp.listeners.QuitListener;
 import org.bukkit.entity.Player;
@@ -9,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class UnstableSMP extends JavaPlugin {
 
     private DatabaseManager databaseManager;
+    private FishingListener fishingListener;
 
     @Override
     public void onEnable() {
@@ -21,10 +23,12 @@ public class UnstableSMP extends JavaPlugin {
         );
 
         this.databaseManager = new DatabaseManager(this);
+        this.fishingListener = new FishingListener(this);
 
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new QuitListener(this), this);
+        getServer().getPluginManager().registerEvents(fishingListener, this);
         getServer().getPluginManager()
                 .registerEvents(new com.resolutestudios.unstablesmp.listeners.ItemRestrictionListener(this), this);
         getServer().getPluginManager()
@@ -71,5 +75,9 @@ public class UnstableSMP extends JavaPlugin {
 
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
+    }
+
+    public FishingListener getFishingListener() {
+        return fishingListener;
     }
 }
